@@ -33,16 +33,16 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-      - name: Login to Dockerhub
-        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+      - name: Login to Azure Container Registry
+        run: echo "${{ secrets.ACR_PASSWORD }}" | docker login -u "${{ secrets.ACR_USERNAME }}" --password-stdin
 
       - name: Set Image Name
         id: vars
-        run: echo "IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/$(basename ${{ github.repository}})" > "$GITHUB_ENV"
+        run: echo "IMAGE_NAME=${{ secrets.ACR_USERNAME }}/$(basename ${{ github.repository}}) -daam" > "$GITHUB_ENV"
       
       - name: Build The Docker Image
         run: docker build -t $IMAGE_NAME:latest .
 
-      - name: Push The Docker Image
+      - name: Push The Docker Image to ACR
         run: docker push $IMAGE_NAME:latest
         
